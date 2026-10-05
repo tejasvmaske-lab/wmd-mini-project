@@ -30,6 +30,13 @@
       "petType": "Bird",
       "age": "1",
       "id": "OdHk-KbbiFY"
+    },
+    {
+      "petName": "Norris",
+      "petType": "Dog",
+      "age": "12",
+      "imageURL": "",
+      "id": "AQrZv3EBVSM"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

@@ -22,11 +22,15 @@ function ProtectedAdmin() {
 
 function Home() {
     return (
-        <div>
-            <img src={HeroImage} alt="Hero" className="hero-image" />
+        <main>
+            <img
+                src={HeroImage}
+                alt="A dog, cat, and other pets waiting to be adopted"
+                className="hero-image"
+            />
             <About />
             <WhyAdopt />
-        </div>
+        </main>
     );
 }
 

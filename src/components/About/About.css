@@ -1,24 +1,116 @@
+.about {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 68px 32px 84px;
+}
+
+.section-heading {
+  max-width: 760px;
+  margin: 0 auto 42px;
+  text-align: center;
+}
+
+.eyebrow {
+  display: inline-block;
+  margin-bottom: 14px;
+  color: var(--green);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.section-heading h1 {
+  margin: 0 0 16px;
+  font-size: clamp(2.15rem, 4.7vw, 3.5rem);
+}
+
+.section-heading p {
+  max-width: 640px;
+  margin: 0 auto;
+  color: var(--muted);
+  font-size: 1.08rem;
+}
+
 .box-section {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    padding-top: 30px;
-    padding-left: 30px;
-    padding-right: 30px;
-    padding-bottom: 30px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
 }
 
 .box {
-  background-color: #27292e;
-  color: white;
-  padding: 50px;
+  min-height: 224px;
+  padding: 30px 22px;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: var(--surface);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 14%);
   text-align: center;
-  border-radius: 10px;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
 }
 
-.box-section .box:hover {
-    background-color: #4CAF50;
-    color: white;
-    transition: background-color 0.3s ease;
-    transform: scale(1.05);
+.box:hover {
+  transform: translateY(-5px);
+  border-color: #52765c;
+  box-shadow: var(--shadow);
+}
+
+.box img {
+  width: 46px;
+  height: 46px;
+  margin-bottom: 18px;
+  padding: 9px;
+  border-radius: 14px;
+  background: var(--green-soft);
+  object-fit: contain;
+}
+
+.box h2 {
+  margin: 0 0 8px;
+  color: var(--green-dark);
+  font-size: 1.75rem;
+}
+
+.box p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+@media (max-width: 900px) {
+  .box-section {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .about {
+    padding: 48px 18px 60px;
+  }
+
+  .section-heading {
+    margin-bottom: 30px;
+  }
+
+  .section-heading p {
+    font-size: 1rem;
+  }
+
+  .box-section {
+    gap: 12px;
+  }
+
+  .box {
+    min-height: 190px;
+    padding: 22px 12px;
+    border-radius: 17px;
+  }
+
+  .box h2 {
+    font-size: 1.5rem;
+  }
+
+  .box p {
+    font-size: 0.82rem;
+  }
 }

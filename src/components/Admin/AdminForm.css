@@ -1,69 +1,81 @@
 .admin-form {
-  width: 450px;
-  margin: 60px auto;
-  padding: 30px;
-  box-sizing: border-box;
-  border: 1px solid #41444b;
-  border-radius: 10px;
-  background: #27292e;
-  color: #ffffff;
+  width: min(100% - 36px, 460px);
+  margin: 146px auto 60px;
+  padding: clamp(24px, 5vw, 38px);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
   text-align: left;
-  box-shadow: 0 10px 25px rgb(0 0 0 / 25%);
-  margin-top: 150px;
 }
 
 .admin-form h2 {
-  margin: 0 0 24px;
-  color: #ffffff;
+  margin: 0 0 8px;
+  color: var(--green-dark);
+  text-align: center;
+}
+
+.admin-form-intro {
+  margin: 0 0 28px;
+  color: var(--muted);
   text-align: center;
 }
 
 .admin-form .form-group {
-  margin-bottom: 17px;
+  margin-bottom: 18px;
 }
 
 .admin-form label {
   display: block;
   margin-bottom: 7px;
-  color: #ffffff;
-  font-weight: 600;
+  color: var(--ink);
+  font-size: 0.9rem;
+  font-weight: 700;
 }
 
 .admin-form input {
   width: 100%;
-  padding: 11px 12px;
-  box-sizing: border-box;
-  border: 1px solid #656a73;
-  border-radius: 5px;
-  background: #0f1115;
-  color: #ffffff;
-  font: inherit;
+  min-height: 48px;
+  padding: 10px 13px;
+  border: 1px solid #3a493d;
+  border-radius: 12px;
+  background: #151c17;
+  color: var(--ink);
 }
 
 .admin-form input:focus {
-  outline: 2px solid #4caf50;
-  outline-offset: 1px;
+  border-color: var(--green);
+  box-shadow: 0 0 0 4px rgb(121 184 138 / 14%);
+  outline: none;
 }
 
 .admin-form button {
   width: 100%;
+  min-height: 50px;
   padding: 12px 20px;
   border: 0;
-  border-radius: 5px;
-  background: #4caf50;
-  color: #ffffff;
-  font: inherit;
-  font-weight: 700;
+  border-radius: 13px;
+  background: var(--green);
+  color: #fff;
   cursor: pointer;
+  font-weight: 750;
+  transition: background-color 160ms ease, transform 160ms ease;
 }
 
 .admin-form button:hover {
-  background: #3d9141;
+  transform: translateY(-1px);
+  background: var(--green-dark);
 }
 
 .login-error {
-  margin: 10px 0;
-  color: #ef5350;
+  margin: 10px 0 16px;
+  color: #b94737;
   text-align: center;
-  font-size: 14px;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 390px) {
+  .admin-form {
+    margin-top: 160px;
+  }
 }

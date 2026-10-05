@@ -1,94 +1,172 @@
-*{
-    margin:20;
-    padding:0;
-    box-sizing:border-box;
+.admin-container {
+  min-height: 100vh;
+  padding: 136px 28px 64px;
+  background:
+    radial-gradient(ellipse at 10% 0%, rgb(54 88 61 / 22%), transparent 38%),
+    var(--paper);
 }
 
-.admin-container{
-    padding: 80px;
+.admin-container .heading {
+  margin: 0 auto 22px;
+  text-align: center;
 }
 
-body{
-    background:#0F1115;
-    color:white;
-    font-family:Arial, sans-serif;
+.admin-container .heading h1 {
+  margin: 0;
+  font-size: clamp(2.2rem, 4.7vw, 3.5rem);
 }
 
-.heading{
-    text-align:center;
-    margin:30px 0;
+.admin-container > .logout-btn {
+  display: block;
+  min-height: 40px;
+  margin: 0 auto 26px;
+  padding: 9px 16px;
+  border: 1px solid #66433a;
+  border-radius: 11px;
+  background: #30221f;
+  color: #f0a08a;
+  cursor: pointer;
+  font-weight: 700;
+  transition: background-color 160ms ease;
 }
 
-#petForm{
-    width:450px;
-    margin:auto;
-    padding:20px;
-    border:1px solid gray;
-    border-radius:8px;
+.admin-container > .logout-btn:hover {
+  background: #402923;
 }
 
-#petForm input,
-#petForm select{
-    width:100%;
-    padding:10px;
-    margin-bottom:15px;
-    border-radius:5px;
-    border:none;
+.admin-container #petForm {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 26px;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
 }
 
-button{
-    padding:10px 20px;
-    margin-right:10px;
-    cursor:pointer;
-    border:none;
-    border-radius:5px;
+.admin-container #petForm input,
+.admin-container #petForm select {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 13px;
+  border: 1px solid #3a493d;
+  border-radius: 11px;
+  background: #151c17;
+  color: var(--ink);
 }
 
-#addData{
-    background:green;
-    color:white;
+.admin-container #petForm .buttons {
+  display: flex;
+  grid-column: 1 / -1;
+  gap: 10px;
 }
 
-#showPets{
-    background:steelblue;
-    color:white;
+.admin-container #petForm .buttons button {
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 11px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: background-color 160ms ease, transform 160ms ease;
 }
 
-h2{
-    text-align:center;
-    margin-top:40px;
-    margin-bottom:20px;
+.admin-container #addData {
+  background: var(--green);
+  color: #fff;
 }
 
-table{
-    width:70%;
-    margin:auto;
-    border-collapse:collapse;
+.admin-container #addData:hover {
+  transform: translateY(-1px);
+  background: var(--green-dark);
 }
 
-table, th, td{
-    border:1px solid white;
+.admin-container #showPets {
+  border: 1px solid var(--border);
+  background: #29352d;
+  color: var(--ink);
 }
 
-th{
-    background:#2d2d2d;
-    padding:12px;
+.admin-container #showPets:hover {
+  background: #344538;
 }
 
-td{
-    padding:10px;
-    text-align:center;
+.admin-container > h2 {
+  max-width: 1080px;
+  margin: 44px auto 16px;
+  color: var(--green-dark);
+  text-align: left;
 }
 
-.logout-btn {
-    background: #ef5350;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+.admin-container #petTable {
+  display: block;
+  width: min(100%, 1080px);
+  margin: 0 auto;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-spacing: 0;
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 14%);
+  text-align: left;
+  white-space: nowrap;
 }
 
-.logout-btn:hover {
-    background: #d84343;
+.admin-container #petTable th,
+.admin-container #petTable td {
+  padding: 13px 16px;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.admin-container #petTable th {
+  background: #26382b;
+  color: #bde2c2;
+  font-size: 0.84rem;
+  font-weight: 750;
+}
+
+.admin-container #petTable tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.admin-container #petTable tbody tr:hover {
+  background: #202b23;
+}
+
+.admin-container #petTable img {
+  width: 72px;
+  height: 54px;
+  border-radius: 9px;
+  object-fit: cover;
+}
+
+@media (max-width: 620px) {
+  .admin-container {
+    padding: 124px 14px 42px;
+  }
+
+  .admin-container #petForm {
+    grid-template-columns: 1fr;
+    padding: 18px;
+    border-radius: 18px;
+  }
+
+  .admin-container #petForm .buttons {
+    grid-column: auto;
+    flex-direction: column;
+  }
+
+  .admin-container > h2 {
+    margin-top: 34px;
+  }
+}
+
+@media (max-width: 390px) {
+  .admin-container {
+    padding-top: 160px;
+  }
 }

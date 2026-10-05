@@ -3,13 +3,15 @@ import {cardData} from "./Box.jsx";
 
 function About() {
     return (
-        <div className="about">
-            <h1>Helping Pets Find Loving Homes</h1>
-            <br></br>
-            <p>
+        <section className="about" id="about">
+            <div className="section-heading">
+                <span className="eyebrow">A little love goes a long way</span>
+                <h1>Helping pets find loving homes</h1>
+                <p>
                 Connecting caring families with pets in need through a simple, safe, and 
                 trusted adoption experience.
-            </p>
+                </p>
+            </div>
             <div className="box-section">
                 {cardData.map((card, index) => (
                     <div className="box" key={index}>
@@ -19,7 +21,7 @@ function About() {
                     </div>
                 ))}
             </div>
-        </div>
+        </section>
     );
 }
 

@@ -47,6 +47,7 @@ function AdminForm() {
         <div className="admin-form">
 
             <h2>Admin Login</h2>
+            <p className="admin-form-intro">Sign in to manage your adoption listings.</p>
 
             <form onSubmit={handleLogin}>
 
