@@ -38,6 +38,13 @@
       "age": "4",
       "imageURL": "",
       "id": "DcTFskghk7k"
+    },
+    {
+      "petName": "Abc",
+      "petType": "Dog",
+      "age": "3",
+      "imageURL": "",
+      "id": "N4ZQs2aT4EI"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
