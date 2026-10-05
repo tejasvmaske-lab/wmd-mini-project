@@ -7,6 +7,7 @@ const [petName, setPetName] = useState("");
 const [petType, setPetType] = useState("");
 const [age, setAge] = useState("");
 const [imageURL, setImageURL] = useState("");
+const [editingPetId, setEditingPetId] = useState(null);
 
 const navigate = useNavigate();
 
@@ -50,44 +51,77 @@ const handleLogout = () => {
     navigate("/admin-login");
 };
 
-// ADD NEW PET
-async function addPet() {
-    // Read values entered by the user (from state)
-    const name = petName;
-    const type = petType;
-    const petAge = age;
+function clearForm() {
+    setPetName("");
+    setPetType("");
+    setAge("");
+    setImageURL("");
+    setEditingPetId(null);
+}
 
-    // Create a JavaScript object
-    const newPet = {
-        petName: name,
-        petType: type,
-        age: petAge,
-        imageURL: imageURL,
+function editPet(pet) {
+    setEditingPetId(pet.id);
+    setPetName(pet.petName);
+    setPetType(pet.petType);
+    setAge(String(pet.age));
+    setImageURL(pet.imageURL || "");
+    document.getElementById("petForm").scrollIntoView({ behavior: "smooth" });
+}
+
+// ADD OR UPDATE PET
+async function addPet() {
+    const petData = {
+        petName,
+        petType,
+        age: Number(age),
+        imageURL,
     };
+    const isEditing = editingPetId !== null;
+    const url = isEditing
+        ? `http://localhost:8081/pets/${editingPetId}`
+        : "http://localhost:8081/pets";
 
     try {
-        const response = await fetch("http://localhost:8081/pets", {
-            method: "POST",
+        const response = await fetch(url, {
+            method: isEditing ? "PUT" : "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(newPet),
+            body: JSON.stringify(petData),
         });
 
         if (!response.ok) {
-            throw new Error("The pet could not be added.");
+            throw new Error(`The pet could not be ${isEditing ? "updated" : "added"}.`);
         }
 
-        alert("New pet added successfully!");
-
-        // Clear the input fields (React state)
-        setPetName("");
-        setPetType("");
-        setAge("");
-        setImageURL("");
-        // refresh the pet list
+        alert(isEditing ? "Pet details updated successfully!" : "New pet added successfully!");
+        clearForm();
         await loadPets();
     } catch (error) {
-        console.error("Error adding pet:", error);
-        alert("Unable to add pet. Please check that the Spring Boot server is running.");
+        console.error(`Error ${isEditing ? "updating" : "adding"} pet:`, error);
+        alert(`Unable to ${isEditing ? "update" : "add"} pet. Please check that the Spring Boot server is running.`);
+    }
+}
+
+async function deletePet(petId) {
+    if (!window.confirm("Are you sure you want to remove this pet?")) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`http://localhost:8081/pets/${petId}`, {
+            method: "DELETE",
+        });
+
+        if (!response.ok) {
+            throw new Error("The pet could not be removed.");
+        }
+
+        if (editingPetId === petId) {
+            clearForm();
+        }
+        await loadPets();
+    } catch (error) {
+        console.error("Error removing pet:", error);
+        alert("Unable to remove pet. Please check that the Spring Boot server is running.");
     }
 }
 
@@ -159,8 +193,14 @@ async function loadPets() {
 
                 <div className="buttons">
                     <button type="button" id="addData" onClick={addPet}>
-                        Add
+                        {editingPetId === null ? "Add" : "Save Changes"}
                     </button>
+
+                    {editingPetId !== null && (
+                        <button type="button" id="cancelEdit" onClick={clearForm}>
+                            Cancel
+                        </button>
+                    )}
 
                     <button type="button" id="showPets" onClick={loadPets}>
                         Show All Pets
@@ -178,6 +218,7 @@ async function loadPets() {
                         <th>Type</th>
                         <th>Age</th>
                         <th>Image</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
 
@@ -188,7 +229,25 @@ async function loadPets() {
                             <td>{pet.petName}</td>
                             <td>{pet.petType}</td>
                             <td>{pet.age}</td>
-                            <td><img src={pet.imageURL} alt={pet.petName} /></td>
+                            <td>
+                                {pet.imageURL ? (
+                                    <img
+                                        src={pet.imageURL}
+                                        alt={pet.petName}
+                                        onError={(event) => {
+                                            event.currentTarget.hidden = true;
+                                        }}
+                                    />
+                                ) : "No image"}
+                            </td>
+                            <td className="pet-actions">
+                                <button type="button" onClick={() => editPet(pet)}>
+                                    Edit
+                                </button>
+                                <button type="button" onClick={() => deletePet(pet.id)}>
+                                    Remove
+                                </button>
+                            </td>
                         </tr>
                     ))}
                 </tbody>
