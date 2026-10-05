@@ -1,0 +1,138 @@
+.app-container {
+  min-height: 100vh;
+  padding: 140px 30px 50px;
+  background: #0f1115;
+  color: #ffffff;
+  box-sizing: border-box;
+}
+
+.header {
+  max-width: 1126px;
+  margin: 0 auto 35px;
+  text-align: center;
+}
+
+.header h1 {
+  margin: 0 0 10px;
+  color: #ffffff;
+  font-size: 42px;
+  letter-spacing: -1px;
+}
+
+.header p {
+  color: #b8bcc5;
+}
+
+.main-content {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  max-width: 950px;
+  margin: 0 auto;
+}
+
+.card {
+  padding: 30px;
+  background: #27292e;
+  border: 1px solid #41444b;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgb(0 0 0 / 25%);
+  box-sizing: border-box;
+}
+
+.card h2 {
+  margin: 0 0 24px;
+  color: #ffffff;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 17px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 7px;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid #656a73;
+  border-radius: 5px;
+  background: #0f1115;
+  color: #ffffff;
+  font: inherit;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: 2px solid #4caf50;
+  outline-offset: 1px;
+}
+
+.error {
+  display: block;
+  margin-top: 5px;
+  color: #ff8f8f;
+  font-size: 14px;
+}
+
+.btn {
+  width: 100%;
+  padding: 12px 20px;
+  border: 0;
+  border-radius: 5px;
+  background: #4caf50;
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: #3d9141;
+}
+
+.placeholder {
+  padding: 35px 10px;
+  color: #b8bcc5;
+  text-align: center;
+}
+
+.pet-id-card {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  padding: 22px;
+  border: 2px solid #4caf50;
+  border-radius: 8px;
+  background: #0f1115;
+  text-align: left;
+}
+
+.pet-icon {
+  font-size: 42px;
+  line-height: 1;
+}
+
+.pet-card-body h2 {
+  margin-bottom: 14px;
+  text-align: left;
+}
+
+.pet-card-body p {
+  margin-bottom: 8px;
+  color: #d5d8de;
+}
+
+.pet-card-body .status {
+  margin-top: 18px;
+  color: #70d274;
+  font-weight: 700;
+}

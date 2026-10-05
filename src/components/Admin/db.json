@@ -1,0 +1,36 @@
+{
+  "pets": [
+    {
+      "id": "1",
+      "petName": "Charlie",
+      "petType": "Dog",
+      "age": "10",
+      "imageURL": "https://www.zooplus.ie/magazine/dog/dog-breeds/beagle"
+    },
+    {
+      "petName": "Bruno",
+      "petType": "Dog",
+      "age": "10",
+      "id": "b-UorylpsjA"
+    },
+    {
+      "petName": "Bucky",
+      "petType": "Bird",
+      "age": "1",
+      "id": "fLDO4DPenr0"
+    },
+    {
+      "petName": "Rio",
+      "petType": "Bird",
+      "age": "2",
+      "id": "7g1wkfYYXuc"
+    },
+    {
+      "petName": "Max",
+      "petType": "Bird",
+      "age": "1",
+      "id": "OdHk-KbbiFY"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}

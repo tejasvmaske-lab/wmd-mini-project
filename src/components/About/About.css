@@ -1,0 +1,24 @@
+.box-section {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    padding-top: 30px;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-bottom: 30px;
+}
+
+.box {
+  background-color: #27292e;
+  color: white;
+  padding: 50px;
+  text-align: center;
+  border-radius: 10px;
+}
+
+.box-section .box:hover {
+    background-color: #4CAF50;
+    color: white;
+    transition: background-color 0.3s ease;
+    transform: scale(1.05);
+}
