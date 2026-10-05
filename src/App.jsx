@@ -8,6 +8,7 @@ import WhyAdopt from "./components/WhyAdopt/WhyAdopt.jsx";
 import Admin from "./components/Admin/Admin.jsx";
 import CardGenerator from "./components/CardGenerator/CardGenerator.jsx";
 import AdminForm from "./components/Admin/AdminForm.jsx";
+import AdoptionPage from "./components/Adoption/AdoptionPage.jsx";
 
 function ProtectedAdmin() {
     const token = localStorage.getItem("adminToken");
@@ -43,6 +44,7 @@ function App() {
                 <Route path="/admin-login" element={<AdminForm />} />
                 <Route path="/admin" element={<ProtectedAdmin />} />
                 <Route path="/card-generator" element={<CardGenerator />} />
+                <Route path="/adopt" element={<AdoptionPage />} />
             </Routes>
         </BrowserRouter>
     );

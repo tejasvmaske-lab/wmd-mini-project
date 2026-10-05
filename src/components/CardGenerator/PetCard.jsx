@@ -38,7 +38,22 @@ const wrapCanvasText = (context, text, maxWidth) => {
   return lines.length ? lines : [""];
 };
 
-const createPetCardImage = (pet) => {
+const loadCardPetImage = (imageURL) => new Promise((resolve) => {
+  if (!imageURL) {
+    resolve(null);
+    return;
+  }
+
+  const image = new Image();
+  if (!imageURL.startsWith("data:")) {
+    image.crossOrigin = "anonymous";
+  }
+  image.onload = () => resolve(image);
+  image.onerror = () => resolve(null);
+  image.src = imageURL;
+});
+
+const createPetCardImage = async (pet) => {
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("2d");
 
@@ -46,6 +61,7 @@ const createPetCardImage = (pet) => {
     throw new Error("Your browser could not prepare the pet card image.");
   }
 
+  const petImage = await loadCardPetImage(pet.imageURL);
   const width = 960;
   const padding = 56;
   const valueX = 228;
@@ -108,14 +124,29 @@ const createPetCardImage = (pet) => {
   context.beginPath();
   context.roundRect(padding, 158, 112, 112, 28);
   context.fill();
-  context.fillStyle = "#a4d5ad";
-  context.beginPath();
-  context.arc(91, 205, 12, 0, Math.PI * 2);
-  context.arc(133, 205, 12, 0, Math.PI * 2);
-  context.arc(102, 182, 12, 0, Math.PI * 2);
-  context.arc(122, 182, 12, 0, Math.PI * 2);
-  context.ellipse(112, 224, 23, 17, 0, 0, Math.PI * 2);
-  context.fill();
+  if (petImage) {
+    context.save();
+    context.beginPath();
+    context.roundRect(padding, 158, 112, 112, 28);
+    context.clip();
+    const scale = Math.max(112 / petImage.width, 112 / petImage.height);
+    const imageWidth = petImage.width * scale;
+    const imageHeight = petImage.height * scale;
+    context.drawImage(
+      petImage,
+      padding + (112 - imageWidth) / 2,
+      158 + (112 - imageHeight) / 2,
+      imageWidth,
+      imageHeight,
+    );
+    context.restore();
+  } else {
+    context.fillStyle = "#a0afa4";
+    context.font = "700 17px Arial, sans-serif";
+    context.textAlign = "center";
+    context.fillText("No image", padding + 56, 220);
+    context.textAlign = "left";
+  }
 
   context.fillStyle = "#edf3ed";
   context.font = "700 48px Arial, sans-serif";
@@ -140,20 +171,25 @@ const createPetCardImage = (pet) => {
   context.font = "700 20px Arial, sans-serif";
   context.fillText("A new beginning starts with love.", padding, height - 34);
 
-  return canvas;
+  return { canvas, imageIncluded: Boolean(petImage) };
 };
 
 const PetCard = () => {
   const { activePet } = useCardContext();
   const [downloadError, setDownloadError] = useState("");
+  const [failedImageURL, setFailedImageURL] = useState("");
+  const imageLoadFailed = activePet?.imageURL === failedImageURL;
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (!activePet) return;
 
     setDownloadError("");
 
     try {
-      const canvas = createPetCardImage(activePet);
+      const { canvas, imageIncluded } = await createPetCardImage(activePet);
+      if (activePet.imageURL && !imageIncluded) {
+        setDownloadError("The pet image could not be added to the downloaded card. Check that the URL points to an image and allows cross-origin access.");
+      }
       canvas.toBlob((blob) => {
         if (!blob) {
           setDownloadError("The pet card image could not be created. Please try again.");
@@ -163,7 +199,7 @@ const PetCard = () => {
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
-        link.download = `${activePet.id.toLowerCase()}-pet-card.png`;
+        link.download = `${String(activePet.id).toLowerCase()}-pet-card.png`;
         link.click();
         window.setTimeout(() => URL.revokeObjectURL(url), 1000);
       }, "image/png");
@@ -184,7 +220,17 @@ const PetCard = () => {
       ) : (
         <>
           <div className="pet-id-card">
-            <div className="pet-icon">🐾</div>
+            <div className="pet-icon">
+              {activePet.imageURL && !imageLoadFailed ? (
+                <img
+                  src={activePet.imageURL}
+                  alt={`${activePet.name}`}
+                  onError={() => setFailedImageURL(activePet.imageURL)}
+                />
+              ) : (
+                <span className="pet-image-placeholder">No image</span>
+              )}
+            </div>
             <div className="pet-card-body">
               <h2>{activePet.name}</h2>
               <p>

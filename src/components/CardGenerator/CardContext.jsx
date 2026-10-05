@@ -26,6 +26,7 @@ export const CardProvider = ({ children }) => {
       ageUnit: "months",
       gender: "Not provided",
       location: "Not provided",
+      imageURL: pet.imageURL || "",
     });
   };
 

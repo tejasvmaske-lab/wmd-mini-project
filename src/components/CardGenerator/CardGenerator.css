@@ -146,6 +146,21 @@
   font-size: 30px;
 }
 
+.pet-icon img {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+}
+
+.pet-image-placeholder {
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+}
+
 .pet-card-body h2 {
   margin: 2px 0 18px;
   text-align: left;

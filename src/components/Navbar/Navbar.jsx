@@ -14,7 +14,7 @@ function Navbar() {
                 <a href="/#about">About</a>
             </nav>
             <div className="right-side">
-                <a className="find" href="/#adopt">Find a friend</a>
+                <Link className="find" to="/adopt">Find a friend</Link>
                 <button className="find find-secondary" onClick={() => navigate("/card-generator")}>
                     Pet ID card
                 </button>
