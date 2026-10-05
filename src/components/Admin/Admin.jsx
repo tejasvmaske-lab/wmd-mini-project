@@ -65,14 +65,17 @@ async function addPet() {
         imageURL: imageURL,
     };
 
-    // Send the object to JSON Server
-    const response = await fetch("http://localhost:3000/pets", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newPet),
-    });
+    try {
+        const response = await fetch("http://localhost:8081/pets", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(newPet),
+        });
 
-    if (response.ok) {
+        if (!response.ok) {
+            throw new Error("The pet could not be added.");
+        }
+
         alert("New pet added successfully!");
 
         // Clear the input fields (React state)
@@ -81,15 +84,28 @@ async function addPet() {
         setAge("");
         setImageURL("");
         // refresh the pet list
-        loadPets();
+        await loadPets();
+    } catch (error) {
+        console.error("Error adding pet:", error);
+        alert("Unable to add pet. Please check that the Spring Boot server is running.");
     }
 }
 
-// Function to get all pets from JSON Server
+// Function to get all pets from Spring Boot
 async function loadPets() {
-    const response = await fetch("http://localhost:3000/pets");
-    const data = await response.json();
-    setPets(data);
+    try {
+        const response = await fetch("http://localhost:8081/pets");
+
+        if (!response.ok) {
+            throw new Error("The pet list could not be loaded.");
+        }
+
+        const data = await response.json();
+        setPets(data);
+    } catch (error) {
+        console.error("Error loading pets:", error);
+        alert("Unable to load pets. Please check that the Spring Boot server is running.");
+    }
 }
 
     return (
