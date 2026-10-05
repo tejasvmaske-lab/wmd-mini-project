@@ -165,6 +165,10 @@
   font-weight: 700;
 }
 
+.pet-card-download {
+  margin-top: 18px;
+}
+
 @media (max-width: 800px) {
   .app-container {
     padding: 124px 20px 52px;
