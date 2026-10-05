@@ -16,8 +16,21 @@ export const CardProvider = ({ children }) => {
     setActivePet(pet);
   };
 
+  const selectDatabasePet = (pet) => {
+    setActivePet({
+      id: pet.id,
+      name: pet.petName,
+      species: pet.petType,
+      breed: "Not provided",
+      age: pet.age,
+      ageUnit: "months",
+      gender: "Not provided",
+      location: "Not provided",
+    });
+  };
+
   return (
-    <CardContext.Provider value={{ pets, activePet, addPet }}>
+    <CardContext.Provider value={{ pets, activePet, addPet, selectDatabasePet }}>
       {children}
     </CardContext.Provider>
   );

@@ -1,8 +1,31 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCardContext } from "./CardContext";
 
 const DetailForm = () => {
-  const { addPet } = useCardContext();
+  const { addPet, selectDatabasePet } = useCardContext();
+  const [databasePets, setDatabasePets] = useState([]);
+  const [selectedPetId, setSelectedPetId] = useState("");
+  const [databaseError, setDatabaseError] = useState("");
+
+  useEffect(() => {
+    const loadDatabasePets = async () => {
+      try {
+        const response = await fetch("http://localhost:8081/pets");
+
+        if (!response.ok) {
+          throw new Error("The saved pet list could not be loaded.");
+        }
+
+        setDatabasePets(await response.json());
+        setDatabaseError("");
+      } catch (error) {
+        console.error("Error loading saved pets:", error);
+        setDatabaseError("Saved pets could not be loaded. Please check that the Spring Boot server is running.");
+      }
+    };
+
+    loadDatabasePets();
+  }, []);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -78,9 +101,48 @@ const DetailForm = () => {
     setErrors({});
   };
 
+  const handleDatabasePetSelect = (e) => {
+    e.preventDefault();
+    const selectedPet = databasePets.find(
+      (pet) => String(pet.id) === selectedPetId,
+    );
+
+    if (selectedPet) {
+      selectDatabasePet(selectedPet);
+    }
+  };
+
   return (
     <div className="card">
       <h2>Add Pet Details</h2>
+
+      <form onSubmit={handleDatabasePetSelect}>
+        <div className="form-group">
+          <label htmlFor="savedPet">Quick select a saved pet</label>
+          <select
+            id="savedPet"
+            value={selectedPetId}
+            onChange={(e) => setSelectedPetId(e.target.value)}
+          >
+            <option value="">Select a pet from the database</option>
+            {databasePets.map((pet) => (
+              <option key={pet.id} value={String(pet.id)}>
+                {pet.petName} ({pet.petType})
+              </option>
+            ))}
+          </select>
+        </div>
+        <button type="submit" className="btn" disabled={!selectedPetId}>
+          Generate Card from Selected Pet
+        </button>
+        {databaseError && (
+          <span className="error" role="alert">
+            {databaseError}
+          </span>
+        )}
+      </form>
+
+      <p className="manual-entry-label">Or enter pet details manually</p>
 
       <form onSubmit={handleSubmit}>
 

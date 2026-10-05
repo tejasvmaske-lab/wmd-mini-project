@@ -44,6 +44,13 @@
   color: var(--green-dark);
 }
 
+.manual-entry-label {
+  margin: 24px 0;
+  color: var(--muted);
+  font-weight: 700;
+  text-align: center;
+}
+
 .form-group {
   margin-bottom: 18px;
   text-align: left;

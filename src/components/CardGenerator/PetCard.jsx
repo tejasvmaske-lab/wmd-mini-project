@@ -54,7 +54,7 @@ const createPetCardImage = (pet) => {
     ["Pet ID", pet.id],
     ["Species", pet.species],
     ["Breed", pet.breed],
-    ["Age", `${pet.age} years`],
+    ["Age", `${pet.age} ${pet.ageUnit || "years"}`],
     ["Gender", pet.gender],
     ["Location", pet.location],
   ];
@@ -197,7 +197,7 @@ const PetCard = () => {
                 <strong>Breed:</strong> {activePet.breed}
               </p>
               <p>
-                <strong>Age:</strong> {activePet.age} years
+                <strong>Age:</strong> {activePet.age} {activePet.ageUnit || "years"}
               </p>
               <p>
                 <strong>Gender:</strong> {activePet.gender}
