@@ -8,7 +8,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/pets")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:5174"})
 public class PetController {
 
     private final PetRepository petRepository;
