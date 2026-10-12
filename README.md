@@ -18,19 +18,13 @@ In the Auth0 application settings, allow these local URLs:
 Copy `.env.example` to `.env.local` and fill in the Auth0 domain, application
 client ID, and API audience. Do not put an Auth0 client secret in the frontend.
 
-Set the backend's matching Auth0 issuer, JWKS endpoint, and API audience before
-starting Spring Boot. For example, in PowerShell:
-
-```powershell
-$env:AUTH0_ISSUER_URI = "https://your-tenant.us.auth0.com/"
-$env:AUTH0_JWKS_URI = "https://your-tenant.us.auth0.com/.well-known/jwks.json"
-$env:AUTH0_AUDIENCE = "https://api.pawfect.local"
-```
-
-The issuer must end with `/`, and the audience must match both the Auth0 API
-identifier and `VITE_AUTH0_AUDIENCE`. Adoption requests require a valid Auth0
-access token with the configured issuer and audience. Other pet API operations
-remain unchanged.
+Spring Boot reads the Auth0 domain and API audience from the same `.env.local`
+file when started from `backend\pet-adoption-backend`; no separate environment
+variable setup is required. The domain must be the tenant host without
+`https://` (for example, `your-tenant.us.auth0.com`), and the audience must
+match the Auth0 API identifier. Adoption requests require a valid Auth0 access
+token with the configured issuer and audience. Other pet API operations remain
+unchanged.
 
 ## Run the app
 
