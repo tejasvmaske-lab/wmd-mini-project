@@ -9,9 +9,15 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest(properties = {
+		"spring.security.oauth2.resourceserver.jwt.issuer-uri=https://example.auth0.com/",
+		"auth0.jwks-uri=https://example.auth0.com/.well-known/jwks.json",
+		"auth0.audience=https://api.pawfect.local"
+})
 @AutoConfigureMockMvc
 class PetAdoptionBackendApplicationTests {
 
@@ -32,5 +38,11 @@ class PetAdoptionBackendApplicationTests {
 	void allowsViteOnPort5174ToLoadPets() throws Exception {
 		mockMvc.perform(get("/pets").header("Origin", "http://localhost:5174"))
 				.andExpect(header().string("Access-Control-Allow-Origin", "http://localhost:5174"));
+	}
+
+	@Test
+	void requiresAnAccessTokenToAdoptAPet() throws Exception {
+		mockMvc.perform(delete("/pets/1"))
+				.andExpect(status().isUnauthorized());
 	}
 }

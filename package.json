@@ -11,6 +11,7 @@
     "server": "json-server --watch src/components/Admin/db.json --port 3000"
   },
   "dependencies": {
+    "@auth0/auth0-react": "^2.3.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-router-dom": "^7.18.2"

@@ -99,6 +99,15 @@
   color: var(--ink);
 }
 
+.nav-user {
+  max-width: 180px;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 0.78rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 @media (max-width: 760px) {
   .navbar {
     width: calc(100% - 20px);
@@ -127,7 +136,12 @@
   }
 
   .right-side {
+    flex-wrap: wrap;
     gap: 6px;
+  }
+
+  .nav-user {
+    display: none;
   }
 
   .find {

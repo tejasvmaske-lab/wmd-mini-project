@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../auth/AuthContext.jsx";
 import "./AdoptionPage.css";
 
 const PETS_API = "http://localhost:8081/pets";
 
 function AdoptionPage() {
+  const navigate = useNavigate();
+  const { isAuthenticated, isLoading: isAuthLoading, getAccessTokenSilently } = useAuth();
   const [pets, setPets] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -33,6 +37,11 @@ function AdoptionPage() {
   }, []);
 
   const adoptPet = async (pet) => {
+    if (!isAuthenticated) {
+      navigate("/login", { state: { returnTo: "/adopt" } });
+      return;
+    }
+
     if (!window.confirm(`Would you like to adopt ${pet.petName}?`)) {
       return;
     }
@@ -41,18 +50,30 @@ function AdoptionPage() {
     setError("");
 
     try {
+      const accessToken = await getAccessTokenSilently();
       const response = await fetch(`${PETS_API}/${pet.id}`, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       });
 
       if (!response.ok) {
-        throw new Error("The pet could not be adopted.");
+        throw new Error(
+          response.status === 401
+            ? "Your sign-in could not be verified. Please sign out, sign back in, and try again."
+            : "The pet could not be adopted.",
+        );
       }
 
       setPets((currentPets) => currentPets.filter((currentPet) => currentPet.id !== pet.id));
     } catch (adoptError) {
       console.error("Error adopting pet:", adoptError);
-      setError(`Unable to adopt ${pet.petName}. Please try again.`);
+      setError(
+        adoptError instanceof Error
+          ? adoptError.message
+          : `Unable to adopt ${pet.petName}. Please try again.`,
+      );
     } finally {
       setAdoptingPetId(null);
     }
@@ -103,9 +124,15 @@ function AdoptionPage() {
                   className="adoption-button"
                   type="button"
                   onClick={() => adoptPet(pet)}
-                  disabled={adoptingPetId === pet.id}
+                  disabled={isAuthLoading || adoptingPetId === pet.id}
                 >
-                  {adoptingPetId === pet.id ? "Processing..." : "Adopt"}
+                  {isAuthLoading
+                    ? "Checking sign-in..."
+                    : adoptingPetId === pet.id
+                      ? "Processing..."
+                      : isAuthenticated
+                        ? "Adopt"
+                        : "Sign in to adopt"}
                 </button>
               </div>
             </article>
