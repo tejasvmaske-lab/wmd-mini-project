@@ -36,8 +36,10 @@ useEffect(() => {
             if (!response.ok) {
                 localStorage.removeItem("adminToken");
                 navigate("/admin-login");
+                return;
             }
 
+            await loadPets();
         } catch (error) {
             console.error("Authentication error:", error);
         }
@@ -47,6 +49,9 @@ useEffect(() => {
 }, [navigate]);
 
 const [pets, setPets] = useState([]);
+const [adoptedPets, setAdoptedPets] = useState([]);
+const [adoptedPetsError, setAdoptedPetsError] = useState("");
+const [isLoadingAdoptedPets, setIsLoadingAdoptedPets] = useState(true);
 
 useEffect(() => () => {
     if (imagePreview.startsWith("blob:")) {
@@ -177,8 +182,39 @@ async function loadPets() {
             throw new Error("The pet list could not be loaded.");
         }
 
+        async function loadAdoptedPets() {
+            setIsLoadingAdoptedPets(true);
+            setAdoptedPetsError("");
+
+            try {
+                const response = await fetch("http://localhost:8081/adopted-pets", {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("adminToken") || ""}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error(
+                        response.status === 401
+                            ? "Your admin session is no longer valid. Please sign in again."
+                            : "The adoption history could not be loaded.",
+                    );
+                }
+
+                setAdoptedPets(await response.json());
+            } catch (error) {
+                console.error("Error loading adoption history:", error);
+                setAdoptedPetsError(
+                    error instanceof Error ? error.message : "Unable to load adoption history.",
+                );
+            } finally {
+                setIsLoadingAdoptedPets(false);
+            }
+        }
+
         const data = await response.json();
         setPets(data);
+        await loadAdoptedPets();
     } catch (error) {
         console.error("Error loading pets:", error);
         alert("Unable to load pets. Please check that the Spring Boot server is running.");
@@ -321,6 +357,51 @@ async function loadPets() {
                     ))}
                 </tbody>
             </table>
+
+            <section className="adopted-pets-section" aria-labelledby="adoptedPetsHeading">
+                <div className="adopted-pets-heading">
+                    <h2 id="adoptedPetsHeading">Adopted Pets</h2>
+                    <button type="button" onClick={loadPets} disabled={isLoadingAdoptedPets}>
+                        {isLoadingAdoptedPets ? "Loading..." : "Refresh Adoption History"}
+                    </button>
+                </div>
+
+                {adoptedPetsError && <p className="adopted-pets-error" role="alert">{adoptedPetsError}</p>}
+                {isLoadingAdoptedPets ? (
+                    <p className="adopted-pets-message" role="status">Loading adoption history...</p>
+                ) : (
+                    <table id="adoptedPetTable">
+                        <thead>
+                            <tr>
+                                <th>Pet ID</th>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Age (months)</th>
+                                <th>Adopter</th>
+                                <th>Email</th>
+                                <th>Adopted At</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {adoptedPets.length ? adoptedPets.map((pet) => (
+                                <tr key={pet.id}>
+                                    <td>{pet.petId}</td>
+                                    <td>{pet.petName}</td>
+                                    <td>{pet.petType}</td>
+                                    <td>{pet.age}</td>
+                                    <td>{pet.adopterId}</td>
+                                    <td>{pet.adopterEmail || "Not provided"}</td>
+                                    <td>{new Date(pet.adoptedAt).toLocaleString()}</td>
+                                </tr>
+                            )) : (
+                                <tr>
+                                    <td colSpan="7">No pets have been adopted yet.</td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                )}
+            </section>
         </div>
     );
 }

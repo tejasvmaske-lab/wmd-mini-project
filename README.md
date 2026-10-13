@@ -45,6 +45,8 @@ The admin inventory, adoption page, and pet-card selector use the Spring Boot AP
 
 Admins add pets by selecting an image file (up to 5 MB) in the dashboard; when editing a pet, its current photo is kept unless a replacement is selected. The image is stored with the pet record and displayed throughout the app.
 
+The admin dashboard displays the available-pets inventory and adopted-pets history in separate tables. The history endpoint validates the admin JWT. If you change the Flask admin JWT secret, set the same `ADMIN_JWT_SECRET` environment variable when running both the Flask server and Spring Boot.
+
 To inspect H2 while Spring Boot is running, open `http://localhost:8081/h2-console` and use:
 
 - JDBC URL: `jdbc:h2:mem:db`

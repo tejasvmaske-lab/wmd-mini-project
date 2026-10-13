@@ -1,20 +1,32 @@
 package com.petadoption.backend;
 
+import com.petadoption.backend.entity.AdoptedPet;
 import com.petadoption.backend.entity.Pet;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 import com.petadoption.backend.repository.AdoptedPetRepository;
 import com.petadoption.backend.repository.PetRepository;
 import com.petadoption.backend.service.AdoptionService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.util.Date;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(properties = {
@@ -37,6 +49,9 @@ class PetAdoptionBackendApplicationTests {
 	@Autowired
 	private MockMvc mockMvc;
 
+	@Value("${admin.jwt-secret}")
+	private String adminJwtSecret;
+
 	@Test
 	void contextLoads() {
 		assertThat(petRepository.findAll())
@@ -54,6 +69,30 @@ class PetAdoptionBackendApplicationTests {
 	void requiresAnAccessTokenToAdoptAPet() throws Exception {
 		mockMvc.perform(delete("/pets/1"))
 				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	void requiresAdminAuthenticationToReadAdoptionHistory() throws Exception {
+		mockMvc.perform(get("/adopted-pets"))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	void allowsAdminToReadAdoptionHistory() throws Exception {
+		Pet pet = petRepository.save(new Pet("History test", "Dog", 8, ""));
+		AdoptedPet adoptedPet = adoptedPetRepository.save(new AdoptedPet(
+				pet, "auth0|history-user", "history@example.com", Instant.now()));
+
+		try {
+			mockMvc.perform(get("/adopted-pets")
+							.header("Authorization", "Bearer " + createAdminToken()))
+					.andExpect(status().isOk())
+					.andExpect(jsonPath("$[0].petName").value("History test"))
+					.andExpect(jsonPath("$[0].adopterEmail").value("history@example.com"));
+		} finally {
+			adoptedPetRepository.delete(adoptedPet);
+			petRepository.delete(pet);
+		}
 	}
 
 	@Test
@@ -94,5 +133,18 @@ class PetAdoptionBackendApplicationTests {
 			adoptedPetRepository.deleteAll();
 			petRepository.deleteById(pet.getId());
 		}
+	}
+
+	private String createAdminToken() throws Exception {
+		Instant now = Instant.now();
+		JWTClaimsSet claims = new JWTClaimsSet.Builder()
+				.subject("admin")
+				.claim("role", "ADMIN")
+				.issueTime(Date.from(now))
+				.expirationTime(Date.from(now.plusSeconds(60)))
+				.build();
+		SignedJWT token = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claims);
+		token.sign(new MACSigner(adminJwtSecret.getBytes(StandardCharsets.UTF_8)));
+		return token.serialize();
 	}
 }

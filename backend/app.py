@@ -2,11 +2,12 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import jwt
 import datetime
+import os
 
 app = Flask(__name__)
 CORS(app)
 
-SECRET_KEY = "pet-adoption-secret-key"
+SECRET_KEY = os.environ.get("ADMIN_JWT_SECRET", "pet-adoption-admin-jwt-secret-change-me")
 
 # Dummy admin credentials for testing
 ADMIN_USERNAME = "admin"
