@@ -58,6 +58,36 @@
   color: var(--ink);
 }
 
+.admin-container #petForm .pet-photo-field {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 8px;
+}
+
+.admin-container #petForm .pet-photo-field label {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.admin-container #petForm .pet-photo-field input {
+  min-height: 48px;
+  padding: 8px;
+}
+
+.admin-container #petForm .pet-photo-field p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.admin-container #petForm .pet-photo-preview {
+  width: 120px;
+  height: 90px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  object-fit: cover;
+}
+
 .admin-container #petForm .buttons {
   display: flex;
   grid-column: 1 / -1;
@@ -183,6 +213,10 @@
   .admin-container #petForm .buttons {
     grid-column: auto;
     flex-direction: column;
+  }
+
+  .admin-container #petForm .pet-photo-field {
+    grid-column: auto;
   }
 
   .admin-container > h2 {

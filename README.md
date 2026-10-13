@@ -43,6 +43,8 @@ npm run dev
 
 The admin inventory, adoption page, and pet-card selector use the Spring Boot API at `http://localhost:8081/pets`. On startup, the backend imports the pets in `src/components/Admin/db.json` into H2 when the database is empty. The H2 database is in-memory, so it resets whenever Spring Boot stops and is seeded again from `db.json` the next time it starts.
 
+Admins add pets by selecting an image file (up to 5 MB) in the dashboard; when editing a pet, its current photo is kept unless a replacement is selected. The image is stored with the pet record and displayed throughout the app.
+
 To inspect H2 while Spring Boot is running, open `http://localhost:8081/h2-console` and use:
 
 - JDBC URL: `jdbc:h2:mem:db`

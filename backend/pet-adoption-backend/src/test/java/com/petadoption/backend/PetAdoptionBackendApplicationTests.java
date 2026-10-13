@@ -1,5 +1,6 @@
 package com.petadoption.backend;
 
+import com.petadoption.backend.entity.Pet;
 import com.petadoption.backend.repository.PetRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,5 +45,18 @@ class PetAdoptionBackendApplicationTests {
 	void requiresAnAccessTokenToAdoptAPet() throws Exception {
 		mockMvc.perform(delete("/pets/1"))
 				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	void storesUploadedPetImageDataLongerThanAVarchar() {
+		String imageData = "data:image/png;base64," + "A".repeat(4096);
+		Pet pet = petRepository.save(new Pet("Photo test", "Dog", 1, imageData));
+
+		try {
+			assertThat(petRepository.findById(pet.getId()).orElseThrow().getImageURL())
+					.isEqualTo(imageData);
+		} finally {
+			petRepository.delete(pet);
+		}
 	}
 }

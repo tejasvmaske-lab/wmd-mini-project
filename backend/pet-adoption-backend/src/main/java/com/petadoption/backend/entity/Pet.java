@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 
 @Entity
 public class Pet {
@@ -15,6 +16,7 @@ public class Pet {
     private String petName;
     private String petType;
     private int age;
+    @Lob
     private String imageURL;
 
     public Pet() {

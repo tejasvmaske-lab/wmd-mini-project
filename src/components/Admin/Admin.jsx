@@ -7,6 +7,8 @@ const [petName, setPetName] = useState("");
 const [petType, setPetType] = useState("");
 const [age, setAge] = useState("");
 const [imageURL, setImageURL] = useState("");
+const [imageFile, setImageFile] = useState(null);
+const [imagePreview, setImagePreview] = useState("");
 const [editingPetId, setEditingPetId] = useState(null);
 
 const navigate = useNavigate();
@@ -46,6 +48,12 @@ useEffect(() => {
 
 const [pets, setPets] = useState([]);
 
+useEffect(() => () => {
+    if (imagePreview.startsWith("blob:")) {
+        URL.revokeObjectURL(imagePreview);
+    }
+}, [imagePreview]);
+
 const handleLogout = () => {
     localStorage.removeItem("adminToken");
     navigate("/admin-login");
@@ -56,7 +64,10 @@ function clearForm() {
     setPetType("");
     setAge("");
     setImageURL("");
+    setImageFile(null);
+    setImagePreview("");
     setEditingPetId(null);
+    document.getElementById("petPhoto").value = "";
 }
 
 function editPet(pet) {
@@ -65,16 +76,48 @@ function editPet(pet) {
     setPetType(pet.petType);
     setAge(String(pet.age));
     setImageURL(pet.imageURL || "");
+    setImageFile(null);
+    setImagePreview(pet.imageURL || "");
+    document.getElementById("petPhoto").value = "";
     document.getElementById("petForm").scrollIntoView({ behavior: "smooth" });
 }
 
 // ADD OR UPDATE PET
-async function addPet() {
+async function addPet(event) {
+    event.preventDefault();
+
+    if (!editingPetId && !imageFile) {
+        alert("Please choose a photo for the pet.");
+        return;
+    }
+
+    let uploadedImageURL = imageURL;
+    if (imageFile) {
+        try {
+            uploadedImageURL = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    if (typeof reader.result === "string") {
+                        resolve(reader.result);
+                    } else {
+                        reject(new Error("The selected image could not be read."));
+                    }
+                };
+                reader.onerror = () => reject(new Error("The selected image could not be read."));
+                reader.readAsDataURL(imageFile);
+            });
+        } catch (error) {
+            console.error("Error reading pet photo:", error);
+            alert("Unable to read the selected photo. Please try another image.");
+            return;
+        }
+    }
+
     const petData = {
         petName,
         petType,
         age: Number(age),
-        imageURL,
+        imageURL: uploadedImageURL,
     };
     const isEditing = editingPetId !== null;
     const url = isEditing
@@ -152,7 +195,7 @@ async function loadPets() {
     Logout
 </button>
 
-            <form id="petForm">
+            <form id="petForm" onSubmit={addPet}>
                 <input
                     type="text"
                     id="petName"
@@ -182,17 +225,43 @@ async function loadPets() {
                     required
                 />
 
-                <input 
-                    type="text"
-                    id="imageURL"
-                    placeholder="Image URL for the pet"
-                    required
-                    value={imageURL}
-                    onChange={(e) => setImageURL(e.target.value)}
-                />
+                <div className="pet-photo-field">
+                    <label htmlFor="petPhoto">Pet photo</label>
+                    <input
+                        type="file"
+                        id="petPhoto"
+                        name="petPhoto"
+                        accept="image/*"
+                        required={!editingPetId}
+                        onChange={(event) => {
+                            const file = event.target.files[0];
+                            if (!file) {
+                                setImageFile(null);
+                                setImagePreview(imageURL);
+                                return;
+                            }
+                            if (!file.type.startsWith("image/")) {
+                                event.target.value = "";
+                                alert("Please choose an image file.");
+                                return;
+                            }
+                            if (file.size > 5 * 1024 * 1024) {
+                                event.target.value = "";
+                                alert("Please choose an image smaller than 5 MB.");
+                                return;
+                            }
+                            setImageFile(file);
+                            setImagePreview(URL.createObjectURL(file));
+                        }}
+                    />
+                    <p>Choose an image file (maximum 5 MB).</p>
+                    {imagePreview && (
+                        <img className="pet-photo-preview" src={imagePreview} alt="Pet photo preview" />
+                    )}
+                </div>
 
                 <div className="buttons">
-                    <button type="button" id="addData" onClick={addPet}>
+                    <button type="submit" id="addData">
                         {editingPetId === null ? "Add" : "Save Changes"}
                     </button>
 
