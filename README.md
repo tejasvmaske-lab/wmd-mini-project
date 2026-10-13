@@ -41,7 +41,7 @@ In a second terminal, start the frontend from the project root:
 npm run dev
 ```
 
-The admin inventory, adoption page, and pet-card selector use the Spring Boot API at `http://localhost:8081/pets`. On startup, the backend imports the pets in `src/components/Admin/db.json` into H2 when the database is empty. The H2 database is in-memory, so it resets whenever Spring Boot stops and is seeded again from `db.json` the next time it starts.
+The admin inventory, adoption page, and pet-card selector use the Spring Boot API at `http://localhost:8081/pets`. On startup, the backend imports the pets in `src/components/Admin/db.json` into H2 when the database is empty. Successful adoptions are saved in the `ADOPTED_PETS` H2 table with the pet details, adopter's Auth0 user ID, email when included in the access token, and adoption time. The available pet is removed only after its adoption record is saved. The H2 database is in-memory, so it resets whenever Spring Boot stops and is seeded again from `db.json` the next time it starts.
 
 Admins add pets by selecting an image file (up to 5 MB) in the dashboard; when editing a pet, its current photo is kept unless a replacement is selected. The image is stored with the pet record and displayed throughout the app.
 
@@ -50,5 +50,13 @@ To inspect H2 while Spring Boot is running, open `http://localhost:8081/h2-conso
 - JDBC URL: `jdbc:h2:mem:db`
 - User name: `sa`
 - Password: leave blank
+
+To view adoption history in the H2 console, run:
+
+```sql
+SELECT PET_NAME, PET_TYPE, AGE, ADOPTER_ID, ADOPTER_EMAIL, ADOPTED_AT
+FROM ADOPTED_PETS
+ORDER BY ADOPTED_AT DESC;
+```
 
 `npm run server` starts a separate json-server on port 3000; it is not the API used by the app's pet pages.

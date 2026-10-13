@@ -1,11 +1,14 @@
 package com.petadoption.backend;
 
 import com.petadoption.backend.entity.Pet;
+import com.petadoption.backend.repository.AdoptedPetRepository;
 import com.petadoption.backend.repository.PetRepository;
+import com.petadoption.backend.service.AdoptionService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,6 +27,12 @@ class PetAdoptionBackendApplicationTests {
 
 	@Autowired
 	private PetRepository petRepository;
+
+	@Autowired
+	private AdoptedPetRepository adoptedPetRepository;
+
+	@Autowired
+	private AdoptionService adoptionService;
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -57,6 +66,33 @@ class PetAdoptionBackendApplicationTests {
 					.isEqualTo(imageData);
 		} finally {
 			petRepository.delete(pet);
+		}
+	}
+
+	@Test
+	void recordsAdopterAndPetBeforeRemovingPetFromAvailablePets() {
+		Pet pet = petRepository.save(new Pet("Adoption test", "Cat", 6, ""));
+		Jwt adopter = Jwt.withTokenValue("test-token")
+				.header("alg", "none")
+				.subject("auth0|test-user")
+				.claim("email", "adopter@example.com")
+				.build();
+
+		try {
+			adoptionService.adoptPet(pet.getId(), adopter);
+
+			assertThat(petRepository.existsById(pet.getId())).isFalse();
+			assertThat(adoptedPetRepository.findAll())
+					.anySatisfy(adoption -> {
+						assertThat(adoption.getPetId()).isEqualTo(pet.getId());
+						assertThat(adoption.getPetName()).isEqualTo("Adoption test");
+						assertThat(adoption.getAdopterId()).isEqualTo("auth0|test-user");
+						assertThat(adoption.getAdopterEmail()).isEqualTo("adopter@example.com");
+						assertThat(adoption.getAdoptedAt()).isNotNull();
+					});
+		} finally {
+			adoptedPetRepository.deleteAll();
+			petRepository.deleteById(pet.getId());
 		}
 	}
 }

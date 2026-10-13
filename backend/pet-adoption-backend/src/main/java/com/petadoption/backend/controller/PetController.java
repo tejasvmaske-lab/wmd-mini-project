@@ -2,6 +2,10 @@ package com.petadoption.backend.controller;
 
 import com.petadoption.backend.entity.Pet;
 import com.petadoption.backend.repository.PetRepository;
+import com.petadoption.backend.service.AdoptionService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,9 +16,11 @@ import java.util.List;
 public class PetController {
 
     private final PetRepository petRepository;
+    private final AdoptionService adoptionService;
 
-    public PetController(PetRepository petRepository) {
+    public PetController(PetRepository petRepository, AdoptionService adoptionService) {
         this.petRepository = petRepository;
+        this.adoptionService = adoptionService;
     }
 
     // CREATE
@@ -55,10 +61,8 @@ public class PetController {
 
     // DELETE
     @DeleteMapping("/{id}")
-    public String deletePet(@PathVariable Long id) {
-
-        petRepository.deleteById(id);
-
-        return "Pet deleted successfully";
+    public ResponseEntity<Void> deletePet(@PathVariable Long id, @AuthenticationPrincipal Jwt adopter) {
+        adoptionService.adoptPet(id, adopter);
+        return ResponseEntity.noContent().build();
     }
 }

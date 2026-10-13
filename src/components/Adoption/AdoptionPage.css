@@ -50,6 +50,10 @@
   object-fit: cover;
 }
 
+.adoption-pet-image-placeholder[hidden] {
+  display: none;
+}
+
 .adoption-pet-info {
   padding: 22px;
 }
